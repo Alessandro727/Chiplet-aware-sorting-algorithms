@@ -1,38 +1,3 @@
-/* Copyright (c) 2013
- * The Trustees of Columbia University in the City of New York
- * All rights reserved.
- *
- * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -101,11 +66,6 @@ int calculateCore(int core) {
 int calculatePattern(int n) {
 	int blockSize = 128;
 	int groupSize = 16;
-
-	// if (global_tuples >= 100) {
-	// 	blockSize = 128;
-	// 	groupSize = 16;
-	// }
     int base = (n / blockSize) * blockSize;  // Calculate the base value for the current block
     int offset = n % blockSize;              // Calculate the offset within the current block
 
@@ -115,11 +75,11 @@ int calculatePattern(int n) {
 
 void cpu_bind(int cpu_id)
 {
-	//Chiplet Local
-	// int newCore = cpu_id;
+	// Chiplet Local
+	//int newCore = cpu_id;
 	// Chiplet Mixed
 	int newCore = calculatePattern(cpu_id);
-	// printf("%d -> %d\n", cpu_id, newCore);
+
 	cpu_set_t cpu_set;
 	CPU_ZERO(&cpu_set);
 	CPU_SET(newCore, &cpu_set);
@@ -132,19 +92,6 @@ void cpu_bind(int cpu_id)
         printf("set_mempolicy error");
     }  
 }
-
-// void cpu_bind(int cpu_id)
-// {
-// 	int cpus = hardware_threads();
-// 	size_t size = CPU_ALLOC_SIZE(cpus);
-// 	cpu_set_t *cpu_set = CPU_ALLOC(cpus);
-// 	assert(cpu_set != NULL);
-// 	CPU_ZERO_S(size, cpu_set);
-// 	CPU_SET_S(cpu_id, size, cpu_set);
-// 	assert(pthread_setaffinity_np(pthread_self(),
-// 	       size, cpu_set) == 0);
-// 	CPU_FREE(cpu_set);
-// }
 
 void memory_bind(int numa_id)
 {
@@ -231,28 +178,13 @@ int distribute_bits(int bits, int numa, int pass[], int print)
 	int total_bits = bits + numa_bits;
 	assert(total_bits <= 35);
 	// int limit[] = {12, 24, 35};
-	int limit[] = {12, 23, 34, 45, 56, 67};
+	int limit[] = {12, 23, 34};
 
 	if (global_tuples >= 100) {
 		limit[0] = 14;
 		limit[1] = 27;
 		limit[2] = 40; 
-		limit[3] = 53;
-		limit[4] = 66;
 	}
-	// int limit[] = {12, 23, 34, 45, 56, 67};
-
-	// int limit[] = {13, 25, 37, 49, 61, 73};
-
-	
-
-    // int limit[] = {15, 29, 43, 57, 71};
-
-	// int limit[] = {16, 31, 46, 61, 76};
-
-	// int limit[] = {17, 33, 49, 66};
-
-    // int limit[] = {9, 17, 25, 33, 41, 49, 57, 65};
 
 	// determine how many passes to do
 	int p, passes = 0;
@@ -1204,9 +1136,6 @@ void *sort_thread(void *arg)
 	// bind thread and its allocation
 	if (threads <= d->max_threads)
 		cpu_bind(id);
-		// cpu_bind(d->cpu[id]);
-	// if (numa <= d->max_numa)
-	// 	memory_bind(d->numa_node[id]);
 	// size for histograms
 	int radix_bits = d->bits[0];
 	int partitions = (1 << radix_bits) * (numa == 3 ? 4 : numa);
@@ -1930,8 +1859,6 @@ int main(int argc, char **argv)
 	if (threads != max_threads) {
 		int cpu[threads];
 		schedule_threads(cpu, NULL, threads, numa);
-		//for (t = 0 ; t != threads ; ++t)
-			//fprintf(stderr, "Thread %2ld -> %2d\n", t, cpu[t]);
 	}
 	return EXIT_SUCCESS;
 }

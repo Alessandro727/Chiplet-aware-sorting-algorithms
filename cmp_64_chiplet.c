@@ -1,38 +1,3 @@
-/* Copyright (c) 2013
- * The Trustees of Columbia University in the City of New York
- * All rights reserved.
- *
- * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -79,16 +44,7 @@ int hardware_threads(void)
 		sprintf(name, "/sys/devices/system/cpu/cpu%d", ++cpus);
 	} while (stat(name, &st) == 0);
 	return cpus;
-	//return 8;
 }
-
-// void cpu_bind(int cpu_id)
-// {
-// 	cpu_set_t cpu_set;
-// 	CPU_ZERO(&cpu_set);
-// 	CPU_SET(cpu_id, &cpu_set);
-// 	pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpu_set);
-// }
 
 #define CHIPLETS 16
 #define CORES_PER_CHIPLET 8
@@ -109,10 +65,6 @@ int calculatePattern(int n) {
 	int blockSize = 128;
 	int groupSize = 16;
 
-	// if (global_tuples >= 100) {
-	// 	blockSize = 128;
-	// 	groupSize = 16;
-	// }
     int base = (n / blockSize) * blockSize;  // Calculate the base value for the current block
     int offset = n % blockSize;              // Calculate the offset within the current block
 
@@ -124,7 +76,7 @@ void cpu_bind(int cpu_id)
 {
 	// int newCore = cpu_id;
 	int newCore = calculatePattern(cpu_id);
-	// printf("%d -> %d\n", cpu_id, newCore);
+
 	cpu_set_t cpu_set;
 	CPU_ZERO(&cpu_set);
 	CPU_SET(newCore, &cpu_set);
@@ -177,12 +129,12 @@ void schedule_threads(int *cpu, int *numa_node, int threads, int numa)
 			int i, n = t % numa;
 			for (i = 0 ; i != max_threads ; ++i)
 				if (thread_numa[i] == n) break;
-			//assert(i != max_threads);
+			assert(i != max_threads);
 			thread_numa[i] = -1;
 			cpu[t] = i;
 			if (numa_node != NULL)
 				numa_node[t] = n;
-			//assert(numa_node_of_cpu(i) == n);
+			assert(numa_node_of_cpu(i) == n);
 		}
 		free(thread_numa);
 	}
@@ -190,7 +142,7 @@ void schedule_threads(int *cpu, int *numa_node, int threads, int numa)
 
 void decide_partitions(uint64_t size, uint64_t part[2], int numa, int print)
 {
-	//uint64_t cache = 1500;
+	// uint64_t cache = 1500;
 	uint64_t cache = 1500000;
 	uint64_t fanout[4] = {1, 360, 1000, 1800};
 	uint64_t i, j = 0;
@@ -1847,9 +1799,6 @@ void *sort_thread(void *arg)
 	// bind thread and its allocation
 	if (threads <= d->max_threads)
 		cpu_bind(id);
-	//	cpu_bind(d->cpu[id]);
-	// if (numa <= d->max_numa)
-	// 	memory_bind(d->cpu[id]);
 	// initial histogram and buffers
 	uint64_t partitions_1 = d->partitions_1;
 	uint64_t partitions_2 = d->partitions_2;

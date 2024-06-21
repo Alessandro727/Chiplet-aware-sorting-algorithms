@@ -1,38 +1,3 @@
-/* Copyright (c) 2013
- * The Trustees of Columbia University in the City of New York
- * All rights reserved.
- *
- * Author:  Orestis Polychroniou  (orestis@cs.columbia.edu)
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * 3. Neither the name of the copyright holder nor the names of its
- *    contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- * COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
- * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
- * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
- * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,10 +69,6 @@ int calculatePattern(int n) {
 	int blockSize = 128;
 	int groupSize = 16;
 
-	// if (global_tuples >= 100) {
-	// 	blockSize = 128;
-	// 	groupSize = 16;
-	// }
     int base = (n / blockSize) * blockSize;  // Calculate the base value for the current block
     int offset = n % blockSize;              // Calculate the offset within the current block
 
@@ -121,7 +82,7 @@ void cpu_bind(int cpu_id)
 	// int newCore = cpu_id;
 	// Chiplet Mixed
 	int newCore = calculatePattern(cpu_id);
-	// printf("%d -> %d\n", cpu_id, newCore);
+
 	cpu_set_t cpu_set;
 	CPU_ZERO(&cpu_set);
 	CPU_SET(newCore, &cpu_set);
@@ -246,19 +207,6 @@ int distribute_bits(int bits, int numa, int pass[], int print)
 		limit[3] = 53;
 		limit[4] = 66;
 	}
-	// int limit[] = {12, 23, 34, 45, 56, 67};
-
-	// int limit[] = {13, 25, 37, 49, 61, 73};
-
-	
-
-    // int limit[] = {15, 29, 43, 57, 71};
-
-	// int limit[] = {16, 31, 46, 61, 76};
-
-	// int limit[] = {17, 33, 49, 66};
-
-    // int limit[] = {9, 17, 25, 33, 41, 49, 57, 65};
 
 	// determine how many passes to do
 	int p, passes = 0;
@@ -396,681 +344,6 @@ void free_with_hugepages(uint64_t *ptr, uint64_t size) {
     if (munmap(ptr, size * sizeof(uint64_t)) == -1) {
         perror("munmap");
     }
-}
-
-void histogram_numa_2(uint64_t *keys, uint64_t size, uint64_t *count,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert(radix_bits <= 16);
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d = _mm_set1_epi64x(delim[0] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34; int i;
-	// check for unaligned keys
-	uint64_t p = 0; i = 0;
-	uint64_t unaligned_keys[4];
-	while ((15 & ((uint64_t) keys)) && i != size)
-		unaligned_keys[i++] = *keys++;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		keys += 4; i = 4;
-		unaligned_intro:;
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e_L = _mm_cmpgt_epi64(k12_c, d);
-		__m128i e_H = _mm_cmpgt_epi64(k34_c, d);
-		__m128i e = _mm_packs_epi32(e_L, e_H);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		do {
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			count[p]++;
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end)
-		unaligned_keys[i++] = *keys++;
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-}
-
-void partition_numa_2(uint64_t *keys, uint64_t *rids, uint64_t size,
-                      uint64_t *offsets, uint64_t *sizes, uint64_t *buf,
-                      uint64_t *keys_out, uint64_t *rids_out,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert((63 & (uint64_t) keys_out) == 0);
-	assert((63 & (uint64_t) rids_out) == 0);
-	assert(radix_bits <= 16);
-	int i, partitions = 1 << (radix_bits + 1);
-	// initialize buffers
-	for (i = 0 ; i != partitions ; ++i)
-		buf[(i << 4) | 14] = offsets[i] << 1;
-	// main partition loop
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d = _mm_set1_epi64x(delim[0] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34, v12, v34;
-	// check for unaligned items
-	uint64_t unaligned_keys[4];
-	uint64_t unaligned_rids[4];
-	uint64_t p = 0; i = 0;
-	while ((15 & ((uint64_t) keys)) && i != size) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	assert(i == size || (15 & (uint64_t) rids) == 0);
-	uint32_t *keys_32 = (uint32_t*) keys_out;
-	uint32_t *rids_32 = (uint32_t*) rids_out;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		v12 = _mm_load_si128((__m128i*) &rids[0]);
-		v34 = _mm_load_si128((__m128i*) &rids[2]);
-		keys += 4; rids += 4; i = 4;
-		unaligned_intro:;
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e_L = _mm_cmpgt_epi64(k12_c, d);
-		__m128i e_H = _mm_cmpgt_epi64(k34_c, d);
-		__m128i e = _mm_packs_epi32(e_L, e_H);
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		k12 = _mm_shuffle_epi32(k12, _MM_SHUFFLE(3, 1, 2, 0));
-		k34 = _mm_shuffle_epi32(k34, _MM_SHUFFLE(3, 1, 2, 0));
-		v12 = _mm_shuffle_epi32(v12, _MM_SHUFFLE(3, 1, 2, 0));
-		v34 = _mm_shuffle_epi32(v34, _MM_SHUFFLE(3, 1, 2, 0));
-		__m128i k_L = _mm_unpacklo_epi64(k12, k34);
-		__m128i k_H = _mm_unpackhi_epi64(k12, k34);
-		__m128i v_L = _mm_unpacklo_epi64(v12, v34);
-		__m128i v_H = _mm_unpackhi_epi64(v12, v34);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		h = _mm_slli_epi32(h, 4);
-		do {
-			// extract partition
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			// offset in the cache line pair
-			uint64_t *src = &buf[p];
-			uint64_t index = src[14];
-			src[14] = index + 2;
-			uint64_t offset = index & 15;
-			// pack and store
-			__m128i kkxx = _mm_unpacklo_epi32(k_L, k_H);
-			__m128i vvxx = _mm_unpacklo_epi32(v_L, v_H);
-			__m128i kkvv = _mm_unpacklo_epi64(kkxx, vvxx);
-			_mm_store_si128((__m128i*) &src[offset], kkvv);
-			if (offset == 14) {
-				uint32_t *dest_x = &keys_32[index - 14];
-				uint32_t *dest_y = &rids_32[index - 14];
-				// load cache line from cache to 8 128-bit registers
-				__m128i r0 = _mm_load_si128((__m128i*) &src[0]);
-				__m128i r1 = _mm_load_si128((__m128i*) &src[2]);
-				__m128i r2 = _mm_load_si128((__m128i*) &src[4]);
-				__m128i r3 = _mm_load_si128((__m128i*) &src[6]);
-				__m128i r4 = _mm_load_si128((__m128i*) &src[8]);
-				__m128i r5 = _mm_load_si128((__m128i*) &src[10]);
-				__m128i r6 = _mm_load_si128((__m128i*) &src[12]);
-				__m128i r7 = _mm_load_si128((__m128i*) &src[14]);
-				// split first column
-				__m128i x0 = _mm_unpacklo_epi64(r0, r1);
-				__m128i x1 = _mm_unpacklo_epi64(r2, r3);
-				__m128i x2 = _mm_unpacklo_epi64(r4, r5);
-				__m128i x3 = _mm_unpacklo_epi64(r6, r7);
-				// stream first column
-				_mm_stream_si128((__m128i*) &dest_x[0], x0);
-				_mm_stream_si128((__m128i*) &dest_x[4], x1);
-				_mm_stream_si128((__m128i*) &dest_x[8], x2);
-				_mm_stream_si128((__m128i*) &dest_x[12],x3);
-				// split second column
-				__m128i y0 = _mm_unpackhi_epi64(r0, r1);
-				__m128i y1 = _mm_unpackhi_epi64(r2, r3);
-				__m128i y2 = _mm_unpackhi_epi64(r4, r5);
-				__m128i y3 = _mm_unpackhi_epi64(r6, r7);
-				// stream second column
-				_mm_stream_si128((__m128i*) &dest_y[0], y0);
-				_mm_stream_si128((__m128i*) &dest_y[4], y1);
-				_mm_stream_si128((__m128i*) &dest_y[8], y2);
-				_mm_stream_si128((__m128i*) &dest_y[12],y3);
-				// restore overwritten pointer
-				src[14] = index + 2;
-			}
-			// rotate
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-			k_L = _mm_shuffle_epi32(k_L, _MM_SHUFFLE(0, 3, 2, 1));
-			k_H = _mm_shuffle_epi32(k_H, _MM_SHUFFLE(0, 3, 2, 1));
-			v_L = _mm_shuffle_epi32(v_L, _MM_SHUFFLE(0, 3, 2, 1));
-			v_H = _mm_shuffle_epi32(v_H, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-#ifdef BG
-	// check partition sanity
-	for (i = 0 ; i != partitions ; ++i) {
-		uint64_t index = buf[(i << 4) | 14] >> 1;
-		assert(index - offsets[i] == sizes[i]);
-	}
-#endif
-}
-
-void histogram_numa_4(uint64_t *keys, uint64_t size, uint64_t *count,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert(radix_bits <= 16);
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d1 = _mm_set1_epi64x(delim[0] - convert);
-	__m128i d2 = _mm_set1_epi64x(delim[1] - convert);
-	__m128i d3 = _mm_set1_epi64x(delim[2] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34; int i;
-	// check for unaligned keys
-	uint64_t p = 0; i = 0;
-	uint64_t unaligned_keys[4];
-	while ((15 & ((uint64_t) keys)) && i != size)
-		unaligned_keys[i++] = *keys++;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		keys += 4; i = 4;
-		unaligned_intro:;
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e1_L = _mm_cmpgt_epi64(k12_c, d2);
-		__m128i e1_H = _mm_cmpgt_epi64(k34_c, d2);
-		__m128i d13_L = _mm_blendv_epi8(d1, d3, e1_L);
-		__m128i d13_H = _mm_blendv_epi8(d1, d3, e1_H);
-		__m128i e1 = _mm_packs_epi32(e1_L, e1_H);
-		__m128i e2_L = _mm_cmpgt_epi64(k12_c, d13_L);
-		__m128i e2_H = _mm_cmpgt_epi64(k34_c, d13_H);
-		__m128i e2 = _mm_packs_epi32(e2_L, e2_H);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e1);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e2);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		do {
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			count[p]++;
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end)
-		unaligned_keys[i++] = *keys++;
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-}
-
-void partition_numa_4(uint64_t *keys, uint64_t *rids, uint64_t size,
-                      uint64_t *offsets, uint64_t *sizes, uint64_t *buf,
-                      uint64_t *keys_out, uint64_t *rids_out,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert((63 & (uint64_t) keys_out) == 0);
-	assert((63 & (uint64_t) rids_out) == 0);
-	assert(radix_bits <= 16);
-	int i, partitions = 1 << (radix_bits + 2);
-	// initialize buffers
-	for (i = 0 ; i != partitions ; ++i)
-		buf[(i << 4) | 14] = offsets[i] << 1;
-	// main partition loop
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d1 = _mm_set1_epi64x(delim[0] - convert);
-	__m128i d2 = _mm_set1_epi64x(delim[1] - convert);
-	__m128i d3 = _mm_set1_epi64x(delim[2] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34, v12, v34;
-	// check for unaligned items
-	uint64_t unaligned_keys[4];
-	uint64_t unaligned_rids[4];
-	uint64_t p = 0; i = 0;
-	while ((15 & ((uint64_t) keys)) && i != size) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	assert(i == size || (15 & (uint64_t) rids) == 0);
-	uint32_t *keys_32 = (uint32_t*) keys_out;
-	uint32_t *rids_32 = (uint32_t*) rids_out;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		v12 = _mm_load_si128((__m128i*) &rids[0]);
-		v34 = _mm_load_si128((__m128i*) &rids[2]);
-		keys += 4; rids += 4; i = 4;
-		unaligned_intro:;
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e1_L = _mm_cmpgt_epi64(k12_c, d2);
-		__m128i e1_H = _mm_cmpgt_epi64(k34_c, d2);
-		__m128i d13_L = _mm_blendv_epi8(d1, d3, e1_L);
-		__m128i d13_H = _mm_blendv_epi8(d1, d3, e1_H);
-		__m128i e1 = _mm_packs_epi32(e1_L, e1_H);
-		__m128i e2_L = _mm_cmpgt_epi64(k12_c, d13_L);
-		__m128i e2_H = _mm_cmpgt_epi64(k34_c, d13_H);
-		__m128i e2 = _mm_packs_epi32(e2_L, e2_H);
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		k12 = _mm_shuffle_epi32(k12, _MM_SHUFFLE(3, 1, 2, 0));
-		k34 = _mm_shuffle_epi32(k34, _MM_SHUFFLE(3, 1, 2, 0));
-		v12 = _mm_shuffle_epi32(v12, _MM_SHUFFLE(3, 1, 2, 0));
-		v34 = _mm_shuffle_epi32(v34, _MM_SHUFFLE(3, 1, 2, 0));
-		__m128i k_L = _mm_unpacklo_epi64(k12, k34);
-		__m128i k_H = _mm_unpackhi_epi64(k12, k34);
-		__m128i v_L = _mm_unpacklo_epi64(v12, v34);
-		__m128i v_H = _mm_unpackhi_epi64(v12, v34);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e1);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e2);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		h = _mm_slli_epi32(h, 4);
-		do {
-			// extract partition
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			// offset in the cache line pair
-			uint64_t *src = &buf[p];
-			uint64_t index = src[14];
-			src[14] = index + 2;
-			uint64_t offset = index & 15;
-			// pack and store
-			__m128i kkxx = _mm_unpacklo_epi32(k_L, k_H);
-			__m128i vvxx = _mm_unpacklo_epi32(v_L, v_H);
-			__m128i kkvv = _mm_unpacklo_epi64(kkxx, vvxx);
-			_mm_store_si128((__m128i*) &src[offset], kkvv);
-			if (offset == 14) {
-				uint32_t *dest_x = &keys_32[index - 14];
-				uint32_t *dest_y = &rids_32[index - 14];
-				// load cache line from cache to 8 128-bit registers
-				__m128i r0 = _mm_load_si128((__m128i*) &src[0]);
-				__m128i r1 = _mm_load_si128((__m128i*) &src[2]);
-				__m128i r2 = _mm_load_si128((__m128i*) &src[4]);
-				__m128i r3 = _mm_load_si128((__m128i*) &src[6]);
-				__m128i r4 = _mm_load_si128((__m128i*) &src[8]);
-				__m128i r5 = _mm_load_si128((__m128i*) &src[10]);
-				__m128i r6 = _mm_load_si128((__m128i*) &src[12]);
-				__m128i r7 = _mm_load_si128((__m128i*) &src[14]);
-				// split first column
-				__m128i x0 = _mm_unpacklo_epi64(r0, r1);
-				__m128i x1 = _mm_unpacklo_epi64(r2, r3);
-				__m128i x2 = _mm_unpacklo_epi64(r4, r5);
-				__m128i x3 = _mm_unpacklo_epi64(r6, r7);
-				// stream first column
-				_mm_stream_si128((__m128i*) &dest_x[0], x0);
-				_mm_stream_si128((__m128i*) &dest_x[4], x1);
-				_mm_stream_si128((__m128i*) &dest_x[8], x2);
-				_mm_stream_si128((__m128i*) &dest_x[12],x3);
-				// split second column
-				__m128i y0 = _mm_unpackhi_epi64(r0, r1);
-				__m128i y1 = _mm_unpackhi_epi64(r2, r3);
-				__m128i y2 = _mm_unpackhi_epi64(r4, r5);
-				__m128i y3 = _mm_unpackhi_epi64(r6, r7);
-				// stream second column
-				_mm_stream_si128((__m128i*) &dest_y[0], y0);
-				_mm_stream_si128((__m128i*) &dest_y[4], y1);
-				_mm_stream_si128((__m128i*) &dest_y[8], y2);
-				_mm_stream_si128((__m128i*) &dest_y[12],y3);
-				// restore overwritten pointer
-				src[14] = index + 2;
-			}
-			// rotate
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-			k_L = _mm_shuffle_epi32(k_L, _MM_SHUFFLE(0, 3, 2, 1));
-			k_H = _mm_shuffle_epi32(k_H, _MM_SHUFFLE(0, 3, 2, 1));
-			v_L = _mm_shuffle_epi32(v_L, _MM_SHUFFLE(0, 3, 2, 1));
-			v_H = _mm_shuffle_epi32(v_H, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-#ifdef BG
-	// check partition sanity
-	for (i = 0 ; i != partitions ; ++i) {
-		uint64_t index = buf[(i << 4) | 14] >> 1;
-		assert(index - offsets[i] == sizes[i]);
-	}
-#endif
-}
-
-void histogram_numa_8(uint64_t *keys, uint64_t size, uint64_t *count,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert(radix_bits <= 16);
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d1 = _mm_set1_epi64x(delim[0] - convert);
-	__m128i d2 = _mm_set1_epi64x(delim[1] - convert);
-	__m128i d3 = _mm_set1_epi64x(delim[2] - convert);
-	__m128i d4 = _mm_set1_epi64x(delim[3] - convert);
-	__m128i d5 = _mm_set1_epi64x(delim[4] - convert);
-	__m128i d6 = _mm_set1_epi64x(delim[5] - convert);
-	__m128i d7 = _mm_set1_epi64x(delim[6] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34; int i;
-	// check for unaligned keys
-	uint64_t p = 0; i = 0;
-	uint64_t unaligned_keys[4];
-	while ((15 & ((uint64_t) keys)) && i != size)
-		unaligned_keys[i++] = *keys++;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		keys += 4; i = 4;
-		unaligned_intro:;
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e1_L = _mm_cmpgt_epi64(k12_c, d4);
-		__m128i e1_H = _mm_cmpgt_epi64(k34_c, d4);
-		__m128i d26_L = _mm_blendv_epi8(d2, d6, e1_L);
-		__m128i d26_H = _mm_blendv_epi8(d2, d6, e1_H);
-		__m128i d15_L = _mm_blendv_epi8(d1, d5, e1_L);
-		__m128i d15_H = _mm_blendv_epi8(d1, d5, e1_H);
-		__m128i d37_L = _mm_blendv_epi8(d3, d7, e1_L);
-		__m128i d37_H = _mm_blendv_epi8(d3, d7, e1_H);
-		__m128i e1 = _mm_packs_epi32(e1_L, e1_H);
-		__m128i e2_L = _mm_cmpgt_epi64(k12_c, d26_L);
-		__m128i e2_H = _mm_cmpgt_epi64(k34_c, d26_H);
-		__m128i d1357_L = _mm_blendv_epi8(d15_L, d37_L, e2_L);
-		__m128i d1357_H = _mm_blendv_epi8(d15_H, d37_H, e2_H);
-		__m128i e2 = _mm_packs_epi32(e2_L, e2_H);
-		__m128i e3_L = _mm_cmpgt_epi64(k12_c, d1357_L);
-		__m128i e3_H = _mm_cmpgt_epi64(k34_c, d1357_H);
-		__m128i e3 = _mm_packs_epi32(e3_L, e3_H);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e1);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e2);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e3);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		do {
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			count[p]++;
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end)
-		unaligned_keys[i++] = *keys++;
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-}
-
-void partition_numa_8(uint64_t *keys, uint64_t *rids, uint64_t size,
-                      uint64_t *offsets, uint64_t *sizes, uint64_t *buf,
-                      uint64_t *keys_out, uint64_t *rids_out,
-                      uint8_t radix_bits, uint64_t delim[])
-{
-	assert((63 & (uint64_t) keys_out) == 0);
-	assert((63 & (uint64_t) rids_out) == 0);
-	assert(radix_bits <= 16);
-	int i, partitions = 1 << (radix_bits + 3);
-	// initialize buffers
-	for (i = 0 ; i != partitions ; ++i)
-		buf[(i << 4) | 14] = offsets[i] << 1;
-	// main partition loop
-	uint64_t convert = ((uint64_t) 1) << 63;
-	__m128i s = _mm_set_epi32(0, 0, 0, radix_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i d1 = _mm_set1_epi64x(delim[0] - convert);
-	__m128i d2 = _mm_set1_epi64x(delim[1] - convert);
-	__m128i d3 = _mm_set1_epi64x(delim[2] - convert);
-	__m128i d4 = _mm_set1_epi64x(delim[3] - convert);
-	__m128i d5 = _mm_set1_epi64x(delim[4] - convert);
-	__m128i d6 = _mm_set1_epi64x(delim[5] - convert);
-	__m128i d7 = _mm_set1_epi64x(delim[6] - convert);
-	__m128i c = _mm_set1_epi64x(convert);
-	__m128i k12, k34, v12, v34;
-	// check for unaligned items
-	uint64_t unaligned_keys[4];
-	uint64_t unaligned_rids[4];
-	uint64_t p = 0; i = 0;
-	while ((15 & ((uint64_t) keys)) && i != size) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	assert(i == size || (15 & (uint64_t) rids) == 0);
-	uint32_t *keys_32 = (uint32_t*) keys_out;
-	uint32_t *rids_32 = (uint32_t*) rids_out;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		v12 = _mm_load_si128((__m128i*) &rids[0]);
-		v34 = _mm_load_si128((__m128i*) &rids[2]);
-		keys += 4; rids += 4; i = 4;
-		unaligned_intro:;
-		__m128i k12_c = _mm_sub_epi64(k12, c);
-		__m128i k34_c = _mm_sub_epi64(k34, c);
-		__m128i e1_L = _mm_cmpgt_epi64(k12_c, d4);
-		__m128i e1_H = _mm_cmpgt_epi64(k34_c, d4);
-		__m128i d26_L = _mm_blendv_epi8(d2, d6, e1_L);
-		__m128i d26_H = _mm_blendv_epi8(d2, d6, e1_H);
-		__m128i d15_L = _mm_blendv_epi8(d1, d5, e1_L);
-		__m128i d15_H = _mm_blendv_epi8(d1, d5, e1_H);
-		__m128i d37_L = _mm_blendv_epi8(d3, d7, e1_L);
-		__m128i d37_H = _mm_blendv_epi8(d3, d7, e1_H);
-		__m128i e1 = _mm_packs_epi32(e1_L, e1_H);
-		__m128i e2_L = _mm_cmpgt_epi64(k12_c, d26_L);
-		__m128i e2_H = _mm_cmpgt_epi64(k34_c, d26_H);
-		__m128i d1357_L = _mm_blendv_epi8(d15_L, d37_L, e2_L);
-		__m128i d1357_H = _mm_blendv_epi8(d15_H, d37_H, e2_H);
-		__m128i e2 = _mm_packs_epi32(e2_L, e2_H);
-		__m128i e3_L = _mm_cmpgt_epi64(k12_c, d1357_L);
-		__m128i e3_H = _mm_cmpgt_epi64(k34_c, d1357_H);
-		__m128i e3 = _mm_packs_epi32(e3_L, e3_H);
-		__m128i r = _mm_setzero_si128();
-		r = _mm_sub_epi32(r, e1);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e2);
-		r = _mm_add_epi32(r, r);
-		r = _mm_sub_epi32(r, e3);
-		__m128i h12 = _mm_and_si128(k12, m);
-		__m128i h34 = _mm_and_si128(k34, m);
-		k12 = _mm_shuffle_epi32(k12, _MM_SHUFFLE(3, 1, 2, 0));
-		k34 = _mm_shuffle_epi32(k34, _MM_SHUFFLE(3, 1, 2, 0));
-		v12 = _mm_shuffle_epi32(v12, _MM_SHUFFLE(3, 1, 2, 0));
-		v34 = _mm_shuffle_epi32(v34, _MM_SHUFFLE(3, 1, 2, 0));
-		__m128i k_L = _mm_unpacklo_epi64(k12, k34);
-		__m128i k_H = _mm_unpackhi_epi64(k12, k34);
-		__m128i v_L = _mm_unpacklo_epi64(v12, v34);
-		__m128i v_H = _mm_unpackhi_epi64(v12, v34);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		r = _mm_sll_epi32(r, s);
-		h = _mm_or_si128(h, r);
-		h = _mm_slli_epi32(h, 4);
-		do {
-			// extract partition
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			// offset in the cache line pair
-			uint64_t *src = &buf[p];
-			uint64_t index = src[14];
-			src[14] = index + 2;
-			uint64_t offset = index & 15;
-			// pack and store
-			__m128i kkxx = _mm_unpacklo_epi32(k_L, k_H);
-			__m128i vvxx = _mm_unpacklo_epi32(v_L, v_H);
-			__m128i kkvv = _mm_unpacklo_epi64(kkxx, vvxx);
-			_mm_store_si128((__m128i*) &src[offset], kkvv);
-			if (offset == 14) {
-				uint32_t *dest_x = &keys_32[index - 14];
-				uint32_t *dest_y = &rids_32[index - 14];
-				// load cache line from cache to 8 128-bit registers
-				__m128i r0 = _mm_load_si128((__m128i*) &src[0]);
-				__m128i r1 = _mm_load_si128((__m128i*) &src[2]);
-				__m128i r2 = _mm_load_si128((__m128i*) &src[4]);
-				__m128i r3 = _mm_load_si128((__m128i*) &src[6]);
-				__m128i r4 = _mm_load_si128((__m128i*) &src[8]);
-				__m128i r5 = _mm_load_si128((__m128i*) &src[10]);
-				__m128i r6 = _mm_load_si128((__m128i*) &src[12]);
-				__m128i r7 = _mm_load_si128((__m128i*) &src[14]);
-				// split first column
-				__m128i x0 = _mm_unpacklo_epi64(r0, r1);
-				__m128i x1 = _mm_unpacklo_epi64(r2, r3);
-				__m128i x2 = _mm_unpacklo_epi64(r4, r5);
-				__m128i x3 = _mm_unpacklo_epi64(r6, r7);
-				// stream first column
-				_mm_stream_si128((__m128i*) &dest_x[0], x0);
-				_mm_stream_si128((__m128i*) &dest_x[4], x1);
-				_mm_stream_si128((__m128i*) &dest_x[8], x2);
-				_mm_stream_si128((__m128i*) &dest_x[12],x3);
-				// split second column
-				__m128i y0 = _mm_unpackhi_epi64(r0, r1);
-				__m128i y1 = _mm_unpackhi_epi64(r2, r3);
-				__m128i y2 = _mm_unpackhi_epi64(r4, r5);
-				__m128i y3 = _mm_unpackhi_epi64(r6, r7);
-				// stream second column
-				_mm_stream_si128((__m128i*) &dest_y[0], y0);
-				_mm_stream_si128((__m128i*) &dest_y[4], y1);
-				_mm_stream_si128((__m128i*) &dest_y[8], y2);
-				_mm_stream_si128((__m128i*) &dest_y[12],y3);
-				// restore overwritten pointer
-				src[14] = index + 2;
-			}
-			// rotate
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-			k_L = _mm_shuffle_epi32(k_L, _MM_SHUFFLE(0, 3, 2, 1));
-			k_H = _mm_shuffle_epi32(k_H, _MM_SHUFFLE(0, 3, 2, 1));
-			v_L = _mm_shuffle_epi32(v_L, _MM_SHUFFLE(0, 3, 2, 1));
-			v_H = _mm_shuffle_epi32(v_H, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-#ifdef BG
-	// check partition sanity
-	for (i = 0 ; i != partitions ; ++i) {
-		uint64_t index = buf[(i << 4) | 14] >> 1;
-		assert(index - offsets[i] == sizes[i]);
-	}
-#endif
 }
 
 
@@ -1231,7 +504,7 @@ static inline void prefetch(const void *ptr) {
 }
 
 
-void partition_2_chunks(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
+void partition_using_2_chunks(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
     assert((63 & (uint64_t)keys_out) == 0);
     assert((63 & (uint64_t)rids_out) == 0);
     assert(radix_bits <= 16);
@@ -1635,7 +908,7 @@ void partition_bultin_expect(uint64_t* keys, uint64_t* rids, uint64_t size, uint
 #endif
 }
 
-void partition_wow(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
+void partition(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
     assert((63 & (uint64_t)keys_out) == 0);
     assert((63 & (uint64_t)rids_out) == 0);
     assert(radix_bits <= 16);
@@ -1797,143 +1070,7 @@ void partition_wow(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offs
 #endif
 }
 
-void partition(uint64_t *keys, uint64_t *rids, uint64_t size,
-	       uint64_t *offsets, uint64_t *sizes, uint64_t *buf,
-	       uint64_t *keys_out, uint64_t *rids_out,
-	       uint8_t shift_bits, uint8_t radix_bits)
-{
-	assert((63 & (uint64_t) keys_out) == 0);
-	assert((63 & (uint64_t) rids_out) == 0);
-	assert(radix_bits <= 16);
-	int i, partitions = 1 << radix_bits;
-	// initialize buffers
-	for (i = 0 ; i != partitions ; ++i)
-		buf[(i << 4) | 14] = offsets[i] << 1;
-	// main partition loop
-	__m128i s = _mm_set_epi32(0, 0, 0, shift_bits);
-	__m128i m = _mm_set1_epi64x((1 << radix_bits) - 1);
-	__m128i k12, k34, v12, v34;
-	// check for unaligned items
-	uint64_t unaligned_keys[4];
-	uint64_t unaligned_rids[4];
-	uint64_t p = 0; i = 0;
-	while ((15 & ((uint64_t) keys)) && i != size) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	assert(i == size || (15 & (uint64_t) rids) == 0);
-	uint32_t *keys_32 = (uint32_t*) keys_out;
-	uint32_t *rids_32 = (uint32_t*) rids_out;
-	uint64_t *keys_aligned_end = &keys[(size - i) & ~3];
-	uint64_t *keys_end = &keys[size - i];
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		goto unaligned_intro;
-	}
-	while (keys != keys_aligned_end) {
-		k12 = _mm_load_si128((__m128i*) &keys[0]);
-		k34 = _mm_load_si128((__m128i*) &keys[2]);
-		v12 = _mm_load_si128((__m128i*) &rids[0]);
-		v34 = _mm_load_si128((__m128i*) &rids[2]);
-		keys += 4; rids += 4; i = 4;
-		unaligned_intro:;
-		__m128i h12 = _mm_srl_epi64(k12, s);
-		__m128i h34 = _mm_srl_epi64(k34, s);
-		h12 = _mm_and_si128(h12, m);
-		h34 = _mm_and_si128(h34, m);
-		__m128i h = _mm_packus_epi32(h12, h34);
-		h = _mm_slli_epi32(h, 4);
-		k12 = _mm_shuffle_epi32(k12, _MM_SHUFFLE(3, 1, 2, 0));
-		k34 = _mm_shuffle_epi32(k34, _MM_SHUFFLE(3, 1, 2, 0));
-		v12 = _mm_shuffle_epi32(v12, _MM_SHUFFLE(3, 1, 2, 0));
-		v34 = _mm_shuffle_epi32(v34, _MM_SHUFFLE(3, 1, 2, 0));
-		__m128i k_L = _mm_unpacklo_epi64(k12, k34);
-		__m128i k_H = _mm_unpackhi_epi64(k12, k34);
-		__m128i v_L = _mm_unpacklo_epi64(v12, v34);
-		__m128i v_H = _mm_unpackhi_epi64(v12, v34);
-		do {
-			// extract partition
-			asm("movd	%1, %%eax" : "=a"(p) : "x"(h), "0"(p));
-			// offset in the cache line pair
-			uint64_t *src = &buf[p];
-			uint64_t index = src[14];
-			src[14] = index + 2;
-			uint64_t offset = index & 15;
-			// pack and store
-			__m128i kkxx = _mm_unpacklo_epi32(k_L, k_H);
-			__m128i vvxx = _mm_unpacklo_epi32(v_L, v_H);
-			__m128i kkvv = _mm_unpacklo_epi64(kkxx, vvxx);
-			_mm_store_si128((__m128i*) &src[offset], kkvv);
-			if (offset == 14) {
-				uint32_t *dest_x = &keys_32[index - 14];
-				uint32_t *dest_y = &rids_32[index - 14];
-				// load cache line from cache to 8 128-bit registers
-				__m128i r0 = _mm_load_si128((__m128i*) &src[0]);
-				__m128i r1 = _mm_load_si128((__m128i*) &src[2]);
-				__m128i r2 = _mm_load_si128((__m128i*) &src[4]);
-				__m128i r3 = _mm_load_si128((__m128i*) &src[6]);
-				__m128i r4 = _mm_load_si128((__m128i*) &src[8]);
-				__m128i r5 = _mm_load_si128((__m128i*) &src[10]);
-				__m128i r6 = _mm_load_si128((__m128i*) &src[12]);
-				__m128i r7 = _mm_load_si128((__m128i*) &src[14]);
-				// split first column
-				__m128i x0 = _mm_unpacklo_epi64(r0, r1);
-				__m128i x1 = _mm_unpacklo_epi64(r2, r3);
-				__m128i x2 = _mm_unpacklo_epi64(r4, r5);
-				__m128i x3 = _mm_unpacklo_epi64(r6, r7);
-				// stream first column
-				_mm_stream_si128((__m128i*) &dest_x[0], x0);
-				_mm_stream_si128((__m128i*) &dest_x[4], x1);
-				_mm_stream_si128((__m128i*) &dest_x[8], x2);
-				_mm_stream_si128((__m128i*) &dest_x[12],x3);
-				// split second column
-				__m128i y0 = _mm_unpackhi_epi64(r0, r1);
-				__m128i y1 = _mm_unpackhi_epi64(r2, r3);
-				__m128i y2 = _mm_unpackhi_epi64(r4, r5);
-				__m128i y3 = _mm_unpackhi_epi64(r6, r7);
-				// stream second column
-				_mm_stream_si128((__m128i*) &dest_y[0], y0);
-				_mm_stream_si128((__m128i*) &dest_y[4], y1);
-				_mm_stream_si128((__m128i*) &dest_y[8], y2);
-				_mm_stream_si128((__m128i*) &dest_y[12],y3);
-				// restore overwritten pointer
-				src[14] = index + 2;
-			}
-			// rotate
-			h = _mm_shuffle_epi32(h, _MM_SHUFFLE(0, 3, 2, 1));
-			k_L = _mm_shuffle_epi32(k_L, _MM_SHUFFLE(0, 3, 2, 1));
-			k_H = _mm_shuffle_epi32(k_H, _MM_SHUFFLE(0, 3, 2, 1));
-			v_L = _mm_shuffle_epi32(v_L, _MM_SHUFFLE(0, 3, 2, 1));
-			v_H = _mm_shuffle_epi32(v_H, _MM_SHUFFLE(0, 3, 2, 1));
-		} while (--i);
-	}
-	// histogram last 0-3 unaligned items
-	i = 0; p = 0;
-	while (keys != keys_end) {
-		unaligned_keys[i] = *keys++;
-		unaligned_rids[i++] = *rids++;
-	}
-	if (i) {
-		k12 = _mm_loadu_si128((__m128i*) &unaligned_keys[0]);
-		k34 = _mm_loadu_si128((__m128i*) &unaligned_keys[2]);
-		v12 = _mm_loadu_si128((__m128i*) &unaligned_rids[0]);
-		v34 = _mm_loadu_si128((__m128i*) &unaligned_rids[2]);
-		keys_aligned_end = keys_end;
-		goto unaligned_intro;
-	}
-#ifdef BG
-	// check partition sanity
-	for (i = 0 ; i != partitions ; ++i) {
-		uint64_t index = buf[(i << 4) | 14] >> 1;
-		assert(index - offsets[i] == sizes[i]);
-	}
-#endif
-}
-
-void partition_2(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
+void partition_normal(uint64_t* keys, uint64_t* rids, uint64_t size, uint64_t* offsets, uint64_t* sizes, uint64_t* buf, uint64_t* keys_out, uint64_t* rids_out, uint8_t shift_bits, uint8_t radix_bits) {
     assert((63 & (uint64_t)keys_out) == 0);
     assert((63 & (uint64_t)rids_out) == 0);
     assert(radix_bits <= 16);
@@ -2218,9 +1355,6 @@ void *sort_thread(void *arg)
 	// bind thread and its allocation
 	if (threads <= d->max_threads)
 		cpu_bind(id);
-		// cpu_bind(d->cpu[id]);
-	// if (numa <= d->max_numa)
-	// 	memory_bind(d->numa_node[id]);
 	// size for histograms
 	int radix_bits = d->bits[0];
 	int partitions = (1 << radix_bits) * (numa == 3 ? 4 : numa);
@@ -2273,47 +1407,11 @@ void *sort_thread(void *arg)
 	tim = micro_time();
 	uint64_t *delimiter = calloc(numa, sizeof(uint64_t));
 	delimiter[numa - 1] = ~0;
-	if (numa > 1) {
-		assert((d->sample_size & 3) == 0);
-		uint64_t p, sample_size = (d->sample_size / threads) & ~15;
-		uint64_t *sample = &d->sample[sample_size * id];
-		if (id + 1 == threads)
-			sample_size = d->sample_size - sample_size * id;
-		rand64_t *gen = rand64_init(a->seed);
-		for (p = 0 ; p != sample_size ; ++p)
-			sample[p] = keys[mulhi(rand64_next(gen), size)];
-		// (in-parallel) LSB radix-sort the sample
-		partition_keys(d->sample, d->sample_buf, d->sample_size, d->sample_hist, 0, 8,
-		               id, threads, &global_barrier[gb]);
-		partition_keys(d->sample_buf, d->sample, d->sample_size, d->sample_hist, 8, 8,
-		               id, threads, &global_barrier[gb + 3]);
-		partition_keys(d->sample, d->sample_buf, d->sample_size, d->sample_hist, 16, 8,
-		               id, threads, &global_barrier[gb + 6]);
-		partition_keys(d->sample_buf, d->sample, d->sample_size, d->sample_hist, 24, 8,
-		               id, threads, &global_barrier[gb + 9]);
-		partition_keys(d->sample, d->sample_buf, d->sample_size, d->sample_hist, 32, 8,
-		               id, threads, &global_barrier[gb + 12]);
-		partition_keys(d->sample_buf, d->sample, d->sample_size, d->sample_hist, 40, 8,
-		               id, threads, &global_barrier[gb + 15]);
-		partition_keys(d->sample, d->sample_buf, d->sample_size, d->sample_hist, 48, 8,
-		               id, threads, &global_barrier[gb + 18]);
-		partition_keys(d->sample_buf, d->sample, d->sample_size, d->sample_hist, 56, 8,
-		               id, threads, &global_barrier[gb + 21]);
-		gb += 24;
-		extract_delimiters(d->sample, d->sample_size, delimiter);
-	}
 	tim = micro_time() - tim;
 	a->sample_time = tim;
 	// histogram
 	tim = micro_time();
-	if (numa == 1)
-		histogram(keys, size, count, 0, radix_bits);
-	else if (numa == 2)
-		histogram_numa_2(keys, size, count, radix_bits, delimiter);
-	else if (numa <= 4)
-		histogram_numa_4(keys, size, count, radix_bits, delimiter);
-	else if (numa <= 8)
-		histogram_numa_8(keys, size, count, radix_bits, delimiter);
+	histogram(keys, size, count, 0, radix_bits);
 	tim = micro_time() - tim;
 	a->hist_time[0] = tim;
 	// local counts for numa transfer
@@ -2334,18 +1432,8 @@ void *sort_thread(void *arg)
 	// partition range partitioned data in local nodes
 	uint64_t *keys_out = d->keys_buf[numa_node];
 	uint64_t *rids_out = d->rids_buf[numa_node];
-	if (numa == 1)
-		partition(keys, rids, size, offsets, count, buf,
-		          keys_out, rids_out, 0, radix_bits);
-	else if (numa == 2)
-		partition_numa_2(keys, rids, size, offsets, count, buf,
-		                 keys_out, rids_out, radix_bits, delimiter);
-	else if (numa <= 4)
-		partition_numa_4(keys, rids, size, offsets, count, buf,
-		                 keys_out, rids_out, radix_bits, delimiter);
-	else if (numa <= 8)
-		partition_numa_8(keys, rids, size, offsets, count, buf,
-		                 keys_out, rids_out, radix_bits, delimiter);
+	partition(keys, rids, size, offsets, count, buf,
+	          keys_out, rids_out, 0, radix_bits);
 	// local sync and finalize
 	pthread_barrier_wait(&local_barrier[lb++]);
 	finalize(count, buf, keys_out, rids_out, partitions);
@@ -2354,110 +1442,6 @@ void *sort_thread(void *arg)
 	// synchronize globally
 	pthread_barrier_wait(d->sample_barrier);
 	a->numa_shuffle_time = 0;
-	// copy remote partitions
-	if (numa > 1) {
-		// check numa part sizes
-		uint64_t **transfer = malloc(numa * sizeof(uint64_t*));
-		for (n = 0 ; n != numa ; ++n)
-			transfer[n] = calloc(numa, sizeof(uint64_t));
-		// compute sizes of numa transfers
-		for (i = 0 ; i != threads ; ++i) {
-			int j = d->numa_node[i];
-			for (n = 0 ; n != numa ; ++n)
-				transfer[j][n] += d->numa_local_count[i][n];
-		}
-		// compute local numa size after move
-		uint64_t max_size = numa_size * d->fudge;
-		numa_size = 0;
-		for (n = 0 ; n != numa ; ++n)
-			numa_size += transfer[n][numa_node];
-		if (numa_size > max_size)
-			fprintf(stderr, "NUMA %d is %.2f%% of input\n", numa_node,
-					 numa_size * 100.0 / total_size);
-		assert(numa_size <= max_size);
-		tim = micro_time();
-		// compute starting numa offsets
-		uint64_t *numa_offset = calloc(numa, sizeof(uint64_t));
-		uint64_t *numa_part = malloc(numa * sizeof(uint64_t));
-		for (numa_src = 0 ; numa_src != numa ; ++numa_src)
-			for (numa_dst = 0 ; numa_dst != numa_node ; ++numa_dst)
-				numa_offset[numa_src] += transfer[numa_src][numa_dst];
-		// order of copies
-		uint64_t *order_size = malloc(numa * sizeof(uint64_t));
-		int *order = malloc(numa * sizeof(int));
-		for (n = 0 ; n != numa ; ++n)
-			order[n] = n;
-		// copy one partition at a time
-		uint64_t output_partition_offset = 0;
-		for (i = 0 ; i != (1 << radix_bits) ; ++i) {
-			j = i | (numa_node << radix_bits);
-			// compute size per numa and size for thread to move
-			uint64_t thread_part = 0;
-			uint64_t part_size = 0;
-			for (n = 0 ; n != numa ; ++n) {
-				numa_part[n] = 0;
-				for (t = 0 ; t != threads_per_numa ; ++t)
-					numa_part[n] += d->count[n][t][j];
-				part_size += numa_part[n];
-				thread_part += numa_part[n] / threads_per_numa;
-			}
-			// compute output offset
-			uint64_t output_offset = output_partition_offset +
-						 thread_part * numa_local_id;
-			// shuffle numa order
-			rand64_t *gen = rand64_init(seed);
-			for (n = 0 ; n != numa ; ++n) {
-				swap_i(&order[n], &order[rand64_next(gen) % (numa - n) + n]);
-				// compute size
-				uint64_t input_size = numa_part[n] / threads_per_numa;
-				uint64_t input_offset = input_size * numa_local_id;
-				if (numa_local_id + 1 == threads_per_numa)
-					input_size = numa_part[n] - input_offset;
-				order_size[n] = input_size + (!n ? 0 : order_size[n - 1]);
-			}
-			free(gen);
-			// random numa order
-			for (k = 0 ; k != numa ; ++k) {
-				n = order[k];
-				// compute input offset and size of copy
-				uint64_t input_size = numa_part[n] / threads_per_numa;
-				uint64_t input_offset = input_size * numa_local_id;
-				if (numa_local_id + 1 == threads_per_numa)
-					input_size = numa_part[n] - input_offset;
-				input_offset += numa_offset[n];
-				// re-ordered output offset
-				uint64_t order_output_offset = output_offset +
-							       order_size[n] - input_size;
-				// copy keys and rids
-				keys = &d->keys_buf[n][input_offset];
-				rids = &d->rids_buf[n][input_offset];
-				keys_end = &keys[input_size];
-				rids_end = &rids[input_size];
-				keys_out = &d->keys[numa_node][order_output_offset];
-				rids_out = &d->rids[numa_node][order_output_offset];
-				while (keys != keys_end)
-					_mm_stream_si64((long long int*) keys_out++, *keys++);
-				while (rids != rids_end)
-					_mm_stream_si64((long long int*) rids_out++, *rids++);
-			}
-			output_offset += order_size[numa - 1];
-			// update numa offsets and output offset
-			for (n = 0 ; n != numa ; ++n)
-				numa_offset[n] += numa_part[n];
-			output_partition_offset += part_size;
-		}
-		for (n = 0 ; n != numa ; ++n)
-			free(transfer[n]);
-		free(order);
-		free(order_size);
-		free(transfer);
-		free(numa_part);
-		free(numa_offset);
-		tim = micro_time() - tim;
-		a->numa_shuffle_time = tim;
-		// sync globally
-		pthread_barrier_wait(&global_barrier[gb++]);
-	}
 	// input and outputs
 	uint64_t **keys_a = numa > 1 ? d->keys : d->keys_buf;
 	uint64_t **rids_a = numa > 1 ? d->rids : d->rids_buf;
@@ -2507,8 +1491,6 @@ void *sort_thread(void *arg)
 		swap_ppl(&keys_a, &keys_b);
 		swap_ppl(&rids_a, &rids_b);
 	}
-	// free(buf);
-	// free(offsets);
 	if (numa > 1 && !numa_local_id)
 		d->size[numa_node] = numa_size;
 	pthread_exit(NULL);
@@ -2565,17 +1547,6 @@ int sort(uint64_t **keys, uint64_t **rids, uint64_t *size, int threads,
 	for (n = 0 ; n != numa ; ++n)
 		total_size += size[n];
 	// allocate the sample
-	if (numa > 1) {
-		global.sample_size = 0.001 * total_size;
-		global.sample_size &= ~15;
-		if (global.sample_size > 100000)
-			global.sample_size = 100000;
-		global.sample	  = numa_alloc_interleaved(global.sample_size * sizeof(uint64_t));
-		global.sample_buf = numa_alloc_interleaved(global.sample_size * sizeof(uint64_t));
-		global.sample_hist = malloc(threads * sizeof(uint64_t*));
-		for (t = 0 ; t != threads ; ++t)
-			global.sample_hist[t] = malloc(256 * sizeof(uint64_t));
-	}
 	// check if allocation needed
 	if (keys_buf[0] == NULL)
 		for (n = 0 ; n != numa ; ++n) {
@@ -2651,7 +1622,6 @@ int sort(uint64_t **keys, uint64_t **rids, uint64_t *size, int threads,
 	free(local_barrier);
 	free(global_barrier);
 	// release memory
-	// free(id);
 	free(global.numa_node);
 	free(global.cpu);
 	for (i = 0 ; i != numa ; ++i) {
@@ -2659,15 +1629,10 @@ int sort(uint64_t **keys, uint64_t **rids, uint64_t *size, int threads,
 			free(global.count[i][j]);
 		free(global.count[i]);
 	}
-	if (numa > 1) {
-		numa_free(global.sample,     global.sample_size * sizeof(uint64_t));
-		numa_free(global.sample_buf, global.sample_size * sizeof(uint64_t));
-	}
 	for (i = 0 ; i != threads ; ++i)
 		free(global.numa_local_count[i]);
 	free(global.numa_local_count);
 	free(global.count);
-	// free(data);
 	if (numa > 1) bit_passes++;
 	return bit_passes & 1;
 }
@@ -2701,8 +1666,8 @@ void *check_thread(void *arg)
 	uint64_t pkey = 0;
 	while (keys != keys_end) {
 		uint64_t key = *keys++;
-		// if (rids) assert(key == *rids++);
-		// assert(key >= pkey);
+		if (rids) assert(key == *rids++);
+		assert(key >= pkey);
 		sum += key;
 		pkey = key;
 	}
