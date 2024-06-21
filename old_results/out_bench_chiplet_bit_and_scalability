@@ -1,0 +1,897 @@
+ 
+Core: 8
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,7.19,10.14,8.21
+Chiplet LOCAL,5.23,13.49,16.96,17.55
+Chiplet MIXED,4.08,13.03,22.09,23.88
+ 
+BIT: 8
+ 
+No OPT,2.02,7.40,10.78,9.16
+Chiplet LOCAL,5.36,13.35,16.10,16.92
+Chiplet MIXED,4.06,14.47,20.06,20.74
+ 
+BIT: 16
+ 
+No OPT,1.92,5.04,6.92,5.94
+Chiplet LOCAL,3.87,7.14,8.19,8.45
+Chiplet MIXED,3.03,7.96,10.17,10.61
+ 
+BIT: 32
+ 
+No OPT,1.43,3.63,4.55,4.19
+Chiplet LOCAL,2.65,4.85,5.54,5.63
+Chiplet MIXED,1.87,5.43,6.68,6.61
+ 
+BIT: 48
+ 
+No OPT,1.29,2.62,3.13,2.87
+Chiplet LOCAL,2.02,3.06,3.29,3.40
+Chiplet MIXED,1.56,3.64,4.11,4.13
+ 
+BIT: 64
+ 
+No OPT,1.16,2.12,2.56,2.44
+Chiplet LOCAL,1.68,2.51,2.79,2.80
+Chiplet MIXED,1.13,2.92,3.37,3.29
+ 
+Core: 16
+ 
+ 
+BIT: 4
+ 
+No OPT,2.28,9.09,13.28,12.65
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,18.10,30.03,32.49
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,16.43,34.90,38.95
+ 
+BIT: 8
+ 
+No OPT,2.09,9.56,14.61,13.55
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,19.43,29.27,31.55
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,18.41,31.00,35.03
+ 
+BIT: 16
+ 
+No OPT,1.96,7.37,10.10,9.38
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,11.73,14.93,15.86
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,10.80,16.24,17.63
+ 
+BIT: 32
+ 
+No OPT,1.48,5.15,6.97,6.73
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,7.66,10.04,10.11
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,7.67,10.69,11.05
+ 
+BIT: 48
+ 
+No OPT,1.47,3.79,4.50,4.67
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,5.30,6.17,6.32
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,5.15,6.73,6.94
+ 
+BIT: 64
+ 
+No OPT,1.19,3.07,3.90,3.90
+Chiplet LOCAL(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,4.26,5.06,5.10
+Chiplet MIXED(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,4.16,5.50,5.44
+ 
+ 
+Core: 24
+ 
+ 
+BIT: 4
+ 
+No OPT,2.03,11.35,19.16,21.92
+Chiplet LOCAL,3.94,20.26,40.15,44.25
+Chiplet MIXED,3.99,18.19,41.47,49.76
+ 
+BIT: 8
+ 
+No OPT,1.91,10.95,19.73,23.17
+Chiplet LOCAL,3.59,19.02,39.42,43.69
+Chiplet MIXED,3.70,18.07,41.16,47.70
+ 
+BIT: 16
+ 
+No OPT,1.85,8.87,12.85,13.23
+Chiplet LOCAL,3.04,12.92,20.50,21.90
+Chiplet MIXED,3.21,10.65,21.91,24.14
+ 
+BIT: 32
+ 
+No OPT,1.37,5.67,9.80,9.63
+Chiplet LOCAL,1.93,8.03,13.47,14.14
+Chiplet MIXED,1.91,6.67,14.73,15.48
+ 
+BIT: 48
+ 
+No OPT,1.32,4.88,5.72,5.92
+Chiplet LOCAL,1.73,6.28,8.48,8.75
+Chiplet MIXED,1.71,5.99,9.19,9.65
+ 
+BIT: 64
+ 
+No OPT,1.16,3.79,5.51,5.20
+Chiplet LOCAL,1.37,5.03,6.76,6.98
+Chiplet MIXED,1.31,4.83,7.64,7.72
+ 
+Core: 32
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,12.38,21.17,22.97
+Chiplet LOCAL,3.42,20.05,44.10,49.77
+Chiplet MIXED,3.62,18.72,45.62,52.78
+ 
+BIT: 8
+ 
+No OPT,1.85,11.50,24.02,27.81
+Chiplet LOCAL,3.49,18.97,43.70,49.85
+Chiplet MIXED,3.26,19.94,44.36,51.73
+ 
+BIT: 16
+ 
+No OPT,1.75,9.72,16.18,15.59
+Chiplet LOCAL,2.88,13.80,22.00,25.10
+Chiplet MIXED,2.97,13.10,23.46,25.13
+ 
+BIT: 32
+ 
+No OPT,1.24,6.41,10.65,10.88
+Chiplet LOCAL,1.59,7.92,15.02,16.63
+Chiplet MIXED,1.57,7.83,15.80,17.22
+ 
+BIT: 48
+ 
+No OPT,1.32,5.41,7.95,8.28
+Chiplet LOCAL,1.49,6.71,9.39,9.93
+Chiplet MIXED,1.48,6.58,9.93,10.62
+ 
+BIT: 64
+ 
+No OPT,1.05,4.22,6.30,6.35
+Chiplet LOCAL,1.03,4.88,7.77,8.36
+Chiplet MIXED,1.06,5.01,8.21,8.77
+ 
+Core: 40
+ 
+ 
+BIT: 4
+ 
+No OPT,1.82,13.43,24.47,28.01
+Chiplet LOCAL,3.24,20.52,44.63,50.29
+Chiplet MIXED,3.24,18.15,45.26,53.14
+ 
+BIT: 8
+ 
+No OPT,1.55,11.53,23.67,28.87
+Chiplet LOCAL,3.12,19.83,44.32,50.21
+Chiplet MIXED,3.17,20.38,45.63,52.52
+ 
+BIT: 16
+ 
+No OPT,1.44,8.52,17.60,18.48
+Chiplet LOCAL,2.68,13.40,23.41,25.34
+Chiplet MIXED,2.72,12.98,24.08,26.78
+ 
+BIT: 32
+ 
+No OPT,.95,6.54,11.30,12.97
+Chiplet LOCAL,1.38,7.12,14.93,16.67
+Chiplet MIXED,1.35,7.04,15.90,17.72
+ 
+BIT: 48
+ 
+No OPT,1.00,5.34,7.68,9.94
+Chiplet LOCAL,1.37,5.77,9.49,9.78
+Chiplet MIXED,1.35,6.41,10.03,10.77
+ 
+BIT: 64
+ 
+No OPT,.83,4.16,7.22,8.02
+Chiplet LOCAL,.89,4.33,7.78,8.23
+Chiplet MIXED,.94,4.43,8.29,8.81
+ 
+Core: 48
+ 
+ 
+BIT: 4
+ 
+No OPT,1.46,12.72,27.17,32.59
+Chiplet LOCAL,2.92,19.93,42.78,51.93
+Chiplet MIXED,2.95,18.69,45.26,53.11
+ 
+BIT: 8
+ 
+No OPT,1.23,12.33,26.47,33.12
+Chiplet LOCAL,2.85,19.30,44.99,51.72
+Chiplet MIXED,2.78,17.91,45.77,53.03
+ 
+BIT: 16
+ 
+No OPT,1.14,9.76,16.32,19.41
+Chiplet LOCAL,2.35,13.28,24.13,26.17
+Chiplet MIXED,2.44,10.88,24.53,26.63
+ 
+BIT: 32
+ 
+No OPT,.85,5.70,13.38,15.11
+Chiplet LOCAL,1.17,6.01,13.81,17.17
+Chiplet MIXED,1.21,6.07,15.11,17.72
+ 
+BIT: 48
+ 
+No OPT,.85,5.03,8.37,9.83
+Chiplet LOCAL,1.20,5.36,9.79,10.22
+Chiplet MIXED,1.23,5.81,9.96,10.73
+ 
+BIT: 64
+ 
+No OPT,.80,4.48,7.31,8.21
+Chiplet LOCAL,.88,3.70,7.55,8.38
+Chiplet MIXED,.85,4.01,8.09,8.92
+ 
+Core: 56
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,10.67,25.98,31.42
+Chiplet LOCAL,2.60,18.42,41.43,51.79
+Chiplet MIXED,2.68,19.34,43.05,52.35
+ 
+BIT: 8
+ 
+No OPT,1.12,11.68,24.85,31.12
+Chiplet LOCAL,2.49,16.74,41.42,52.56
+Chiplet MIXED,2.48,18.96,44.20,53.16
+ 
+BIT: 16
+ 
+No OPT,1.12,8.54,18.23,22.60
+Chiplet LOCAL,2.29,12.56,22.93,26.58
+Chiplet MIXED,2.28,12.17,23.08,26.82
+ 
+BIT: 32
+ 
+No OPT,.78,5.52,14.46,13.98
+Chiplet LOCAL,1.05,5.71,14.07,17.64
+Chiplet MIXED,.98,5.87,14.82,17.84
+ 
+BIT: 48
+ 
+No OPT,.75,4.87,8.17,8.10
+Chiplet LOCAL,1.09,5.28,9.09,10.37
+Chiplet MIXED,1.14,5.57,9.53,10.76
+ 
+BIT: 64
+ 
+No OPT,.72,3.82,9.07,7.11
+Chiplet LOCAL,.74,3.54,7.39,8.63
+Chiplet MIXED,.77,3.50,7.91,8.94
+ 
+Core: 64
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+,,9.75,19.52,34.79
+Chiplet LOCAL,2.48,17.43,40.21,53.13
+Chiplet MIXED,2.47,17.29,41.69,53.08
+ 
+BIT: 8
+ 
+No OPT,1.05,9.95,22.78,27.80
+Chiplet LOCAL,2.09,15.53,40.33,53.16
+Chiplet MIXED,2.21,17.18,41.20,52.78
+ 
+BIT: 16
+ 
+No OPT,1.00,7.45,14.85,19.97
+Chiplet LOCAL,2.10,11.25,22.71,26.92
+Chiplet MIXED,2.06,11.20,23.15,26.98
+ 
+BIT: 32
+ 
+No OPT,.69,5.04,11.49,15.05
+Chiplet LOCAL,.95,5.17,14.31,17.82
+Chiplet MIXED,.91,5.00,14.71,17.70
+ 
+BIT: 48
+ 
+No OPT,.70,4.77,10.75,13.18
+Chiplet LOCAL,.99,4.86,9.39,10.79
+Chiplet MIXED,1.04,5.00,9.60,10.79
+ 
+BIT: 64
+ 
+No OPT,.59,3.60,6.85,6.43
+Chiplet LOCAL,.64,3.34,7.72,8.96
+Chiplet MIXED,.66,3.29,7.67,8.91
+ 
+Core: 72
+ 
+ 
+BIT: 4
+ 
+No OPT,1.12,9.87,27.47,33.00
+Chiplet LOCAL,2.00,14.36,38.97,46.13
+Chiplet MIXED,2.09,15.20,41.63,55.75
+ 
+BIT: 8
+ 
+No OPT,.99,10.14,25.02,33.76
+Chiplet LOCAL,1.93,13.03,38.28,52.87
+Chiplet MIXED,2.02,13.80,37.82,49.02
+ 
+BIT: 16
+ 
+No OPT,.92,8.24,17.87,23.73
+Chiplet LOCAL,1.55,9.38,21.95,27.20
+Chiplet MIXED,1.66,10.46,22.95,29.21
+ 
+BIT: 32
+ 
+No OPT,.63,4.96,14.92,14.92
+Chiplet LOCAL,.68,4.72,13.50,18.04
+Chiplet MIXED,.75,4.78,14.97,19.12
+ 
+BIT: 48
+ 
+No OPT,.69,4.85,8.38,8.70
+Chiplet LOCAL,.65,4.24,9.31,11.12
+Chiplet MIXED,.72,4.17,9.98,11.81
+ 
+BIT: 64
+ 
+No OPT,.55,3.58,8.25,9.61
+Chiplet LOCAL,.42,2.84,7.62,9.03
+Chiplet MIXED,.46,2.80,8.19,9.80
+ 
+Core: 80
+ 
+ 
+BIT: 4
+ 
+No OPT,1.04,9.52,22.05,35.03
+Chiplet LOCAL,1.70,11.93,36.45,48.44
+Chiplet MIXED,1.71,13.48,44.12,55.10
+ 
+BIT: 8
+ 
+No OPT,.91,9.24,27.55,33.31
+Chiplet LOCAL,1.67,12.84,35.20,46.03
+Chiplet MIXED,1.72,11.83,38.60,52.15
+ 
+BIT: 16
+ 
+No OPT,.91,7.45,19.57,22.82
+Chiplet LOCAL,1.35,9.02,20.55,23.87
+Chiplet MIXED,1.36,9.52,23.02,29.63
+ 
+BIT: 32
+ 
+No OPT,.59,4.60,14.82,17.72
+Chiplet LOCAL,.61,4.25,12.97,16.13
+Chiplet MIXED,.60,4.19,15.04,19.27
+ 
+BIT: 48
+ 
+No OPT,.64,3.93,9.56,9.60
+Chiplet LOCAL,.56,3.39,7.91,9.90
+Chiplet MIXED,.62,3.64,9.01,11.25
+ 
+BIT: 64
+ 
+No OPT,.52,3.68,9.01,7.85
+Chiplet LOCAL,.36,2.32,6.63,7.96
+Chiplet MIXED,.40,2.52,8.01,10.08
+ 
+Core: 88
+ 
+ 
+BIT: 4
+ 
+No OPT,.89,7.73,26.11,37.62
+Chiplet LOCAL,1.56,12.38,34.09,39.22
+Chiplet MIXED,1.64,12.35,44.56,59.33
+ 
+BIT: 8
+ 
+No OPT,.76,6.80,26.25,35.83
+Chiplet LOCAL,1.47,11.39,33.19,41.05
+Chiplet MIXED,1.45,11.41,41.48,57.54
+ 
+BIT: 16
+ 
+No OPT,.79,6.85,21.21,24.28
+Chiplet LOCAL,1.23,8.47,19.09,20.87
+Chiplet MIXED,1.23,9.47,25.35,30.98
+ 
+BIT: 32
+ 
+No OPT,.54,4.12,12.91,18.37
+Chiplet LOCAL,.52,3.46,11.73,14.60
+Chiplet MIXED,.53,3.77,14.71,19.75
+ 
+BIT: 48
+ 
+No OPT,.60,3.82,10.10,10.48
+Chiplet LOCAL,.55,2.91,7.36,8.28
+Chiplet MIXED,.59,3.22,9.58,12.00
+ 
+BIT: 64
+ 
+No OPT,.51,3.29,9.37,12.81
+Chiplet LOCAL,.34,2.06,5.93,7.04
+Chiplet MIXED,.34,2.09,7.69,10.14
+ 
+Core: 96
+ 
+ 
+BIT: 4
+ 
+No OPT,.77,6.53,23.06,36.68
+Chiplet LOCAL,1.46,9.81,34.36,43.62
+Chiplet MIXED,1.53,10.62,45.37,60.82
+ 
+BIT: 8
+ 
+No OPT,.77,7.20,26.14,35.44
+Chiplet LOCAL,1.39,10.73,32.66,43.34
+Chiplet MIXED,1.46,10.65,43.26,59.66
+ 
+BIT: 16
+ 
+No OPT,.76,6.51,21.87,23.77
+Chiplet LOCAL,1.13,8.44,17.96,20.98
+Chiplet MIXED,1.16,8.00,26.54,28.69
+ 
+BIT: 32
+ 
+No OPT,.46,3.22,10.32,15.48
+Chiplet LOCAL,.46,3.25,11.47,15.22
+Chiplet MIXED,.49,3.40,14.30,20.37
+ 
+BIT: 48
+ 
+No OPT,.49,3.59,8.37,11.57
+Chiplet LOCAL,.49,3.01,6.75,7.98
+Chiplet MIXED,.53,2.87,8.86,11.57
+ 
+BIT: 64
+ 
+No OPT,.46,3.00,8.10,12.02
+Chiplet LOCAL,.33,1.87,5.62,6.48
+Chiplet MIXED,.33,1.94,7.46,9.20
+ 
+Core: 104
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,6.80,28.57,41.13
+Chiplet LOCAL,1.36,10.63,38.41,47.59
+Chiplet MIXED,1.38,10.29,44.99,60.95
+ 
+BIT: 8
+ 
+No OPT,.65,7.52,26.93,39.34
+Chiplet LOCAL,1.33,9.99,36.87,48.59
+Chiplet MIXED,1.27,9.44,43.53,64.27
+ 
+BIT: 16
+ 
+No OPT,.72,6.50,19.77,25.39
+Chiplet LOCAL,1.02,7.73,20.56,25.00
+Chiplet MIXED,1.07,8.05,24.99,32.87
+ 
+BIT: 32
+ 
+No OPT,.47,3.93,12.49,19.93
+Chiplet LOCAL,.45,3.21,12.14,15.47
+Chiplet MIXED,.46,3.21,14.23,20.93
+ 
+BIT: 48
+ 
+No OPT,.52,3.66,10.54,13.30
+Chiplet LOCAL,.49,2.69,7.70,8.40
+Chiplet MIXED,.44,2.60,8.96,12.23
+ 
+BIT: 64
+ 
+No OPT,.40,2.98,7.62,9.36
+Chiplet LOCAL,.33,1.79,6.02,6.46
+Chiplet MIXED,.31,1.80,7.14,10.80
+ 
+Core: 112
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+,,7.50,26.43,38.98
+Chiplet LOCAL,1.30,9.48,40.06,52.27
+Chiplet MIXED,1.25,10.06,43.06,59.01
+ 
+BIT: 8
+ 
+No OPT,.65,5.54,26.14,35.19
+Chiplet LOCAL,1.14,10.05,38.12,48.16
+Chiplet MIXED,1.26,9.99,43.29,54.37
+ 
+BIT: 16
+ 
+No OPT,.65,5.78,16.77,24.15
+Chiplet LOCAL,.88,7.75,21.99,24.33
+Chiplet MIXED,.90,7.44,24.33,31.74
+ 
+BIT: 32
+ 
+No OPT,.45,3.58,13.88,20.45
+Chiplet LOCAL,.44,3.10,12.40,18.20
+Chiplet MIXED,.42,2.99,13.52,18.89
+ 
+BIT: 48
+ 
+No OPT,.47,3.26,10.61,11.28
+Chiplet LOCAL,.47,2.58,7.97,10.22
+Chiplet MIXED,.44,2.51,8.65,12.26
+ 
+BIT: 64
+ 
+No OPT,.41,2.95,7.96,9.14
+Chiplet LOCAL,.28,1.77,6.33,7.89
+Chiplet MIXED,.29,1.74,6.87,9.37
+ 
+Core: 120
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,7.17,26.77,38.98
+Chiplet LOCAL,1.27,9.41,41.30,51.28
+Chiplet MIXED,1.17,9.71,42.57,68.88
+ 
+BIT: 8
+ 
+No OPT,.63,6.75,26.95,40.44
+Chiplet LOCAL,1.17,9.61,40.96,56.01
+Chiplet MIXED,1.10,9.34,42.97,55.26
+ 
+BIT: 16
+ 
+No OPT,.68,5.88,20.30,27.56
+Chiplet LOCAL,.93,7.06,22.60,30.13
+Chiplet MIXED,.88,6.54,24.46,30.04
+ 
+BIT: 32
+ 
+No OPT,.43,3.60,14.92,18.68
+Chiplet LOCAL,.41,3.00,13.10,19.74
+Chiplet MIXED,.41,2.56,13.11,19.14
+ 
+BIT: 48
+ 
+No OPT,.42,3.36,10.34,11.78
+Chiplet LOCAL,.42,2.36,8.52,11.51
+Chiplet MIXED,.38,2.40,8.64,11.03
+ 
+BIT: 64
+ 
+No OPT,.39,2.86,8.59,10.96
+Chiplet LOCAL,.28,1.66,6.81,8.67
+Chiplet MIXED,.26,1.68,6.69,10.07
+ 
+Core: 128
+ 
+ 
+BIT: 4
+ 
+No OPT,.66,6.99,23.74,37.01
+Chiplet LOCAL,1.12,8.92,42.32,69.11
+Chiplet MIXED,1.05,8.76,42.51,75.57
+ 
+BIT: 8
+ 
+No OPT,.63,5.97,26.92,41.64
+Chiplet LOCAL,1.07,9.14,42.97,72.85
+Chiplet MIXED,1.03,8.86,42.64,68.83
+ 
+BIT: 16
+ 
+No OPT,.60,6.28,17.59,29.07
+Chiplet LOCAL,.88,6.11,23.40,29.27
+Chiplet MIXED,.83,6.16,23.73,31.39
+ 
+BIT: 32
+ 
+No OPT,.37,3.30,12.78,18.76
+Chiplet LOCAL,.37,2.73,12.85,19.37
+Chiplet MIXED,.37,2.71,13.06,18.77
+ 
+BIT: 48
+ 
+No OPT,.42,3.19,8.98,10.54
+Chiplet LOCAL,.38,2.33,8.42,11.51
+Chiplet MIXED,.38,2.38,8.80,12.51
+ 
+BIT: 64
+ 
+No OPT,.36,2.54,7.55,10.26
+Chiplet LOCAL,.25,1.63,6.73,8.44
+Chiplet MIXED,.26,1.62,6.59,10.42
+ 
+Core: 4
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,4.71,6.67,5.54
+Chiplet LOCAL,4.55,9.01,11.60,11.92
+Chiplet MIXED,4.26,9.52,12.13,12.46
+ 
+BIT: 8
+ 
+No OPT,2.13,5.30,7.65,6.11
+Chiplet LOCAL,4.46,8.87,10.36,10.68
+Chiplet MIXED,4.18,8.67,10.57,10.83
+ 
+BIT: 16
+ 
+No OPT,1.67,3.36,4.33,3.66
+Chiplet LOCAL,2.90,4.52,5.20,5.37
+Chiplet MIXED,2.92,4.74,5.23,5.41
+ 
+BIT: 32
+ 
+No OPT,1.27,2.25,2.75,2.40
+Chiplet LOCAL,2.11,3.05,3.37,3.23
+Chiplet MIXED,1.98,3.06,3.41,3.26
+ 
+BIT: 48
+ 
+No OPT,1.05,1.62,1.81,1.66
+Chiplet LOCAL,1.48,1.97,2.09,2.06
+Chiplet MIXED,1.40,1.98,2.11,2.08
+ 
+BIT: 64
+ 
+No OPT,.81,1.32,1.45,1.33
+Chiplet LOCAL,1.25,1.59,1.68,1.62
+Chiplet MIXED,1.23,1.62,1.71,1.63
+ 
+Core: 16
+ 
+ 
+BIT: 4
+ 
+No OPT(standard_in) 2: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+(standard_in) 1: syntax error
+,,10.09,14.18,12.39
+Chiplet LOCAL,4.32,17.86,30.39,32.89
+Chiplet MIXED,4.10,16.38,34.42,39.68
+ 
+BIT: 8
+ 
+No OPT,2.00,9.97,14.68,13.65
+Chiplet LOCAL,4.26,18.47,29.46,31.72
+Chiplet MIXED,4.10,19.13,31.32,35.29
+ 
+BIT: 16
+ 
+No OPT,2.05,7.09,9.83,9.37
+Chiplet LOCAL,3.40,11.74,15.06,15.89
+Chiplet MIXED,3.31,11.32,16.73,17.71
+ 
+BIT: 32
+ 
+No OPT,1.42,5.36,7.03,6.56
+Chiplet LOCAL,2.34,7.31,9.92,10.03
+Chiplet MIXED,2.04,6.69,10.68,10.61
+ 
+BIT: 48
+ 
+No OPT,1.41,3.85,4.86,4.69
+Chiplet LOCAL,1.91,5.17,6.19,6.31
+Chiplet MIXED,1.70,5.07,6.75,6.88
+ 
+BIT: 64
+ 
+No OPT,1.24,3.37,4.11,3.96
+Chiplet LOCAL,1.55,4.29,5.03,5.00
+Chiplet MIXED,1.37,4.41,5.46,5.34

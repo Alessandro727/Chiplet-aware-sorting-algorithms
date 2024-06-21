@@ -1,0 +1,357 @@
+ 
+Core: 4
+ 
+ 
+BIT: 16
+ 
+No OPT,.57,.69,.58,.38
+Chiplet LOCAL,.69,1.04,.81,.60
+Chiplet MIXED,.71,.98,.82,.64
+ 
+BIT: 32
+ 
+No OPT,.62,.77,.83,.52
+Chiplet LOCAL,.72,1.05,1.00,.69
+Chiplet MIXED,.70,1.03,1.01,.94
+ 
+BIT: 64
+ 
+No OPT,.58,.77,.80,.62
+Chiplet LOCAL,.70,1.08,1.01,.70
+Chiplet MIXED,.72,1.03,1.01,.94
+ 
+Core: 8
+ 
+ 
+BIT: 16
+ 
+No OPT,.90,1.18,1.13,.91
+Chiplet LOCAL,1.14,1.82,1.53,.72
+Chiplet MIXED,.85,1.76,1.59,1.27
+ 
+BIT: 32
+ 
+No OPT,.94,1.20,1.57,.82
+Chiplet LOCAL,1.17,1.87,1.80,.44
+Chiplet MIXED,.94,1.88,2.00,1.86
+ 
+BIT: 64
+ 
+No OPT,.88,1.14,1.13,.94
+Chiplet LOCAL,1.15,1.86,1.81,.45
+Chiplet MIXED,.91,1.89,1.98,1.86
+ 
+Core: 16
+ 
+ 
+BIT: 16
+ 
+No OPT,1.18,2.25,2.10,1.04
+Chiplet LOCAL,1.44,2.99,2.60,1.26
+Chiplet MIXED,1.27,2.51,2.68,2.12
+ 
+BIT: 32
+ 
+No OPT,1.20,2.62,2.51,.73
+Chiplet LOCAL,1.49,3.11,2.99,.88
+Chiplet MIXED,1.32,2.61,3.26,2.99
+ 
+BIT: 64
+ 
+No OPT,1.20,2.13,2.78,.75
+Chiplet LOCAL,1.26,3.17,3.02,.88
+Chiplet MIXED,1.32,2.66,3.25,3.02
+ 
+Core: 24
+ 
+ 
+BIT: 16
+ 
+No OPT,1.31,2.91,3.17,1.71
+Chiplet LOCAL,1.35,3.68,3.67,1.63
+Chiplet MIXED,1.46,3.40,3.74,2.60
+ 
+BIT: 32
+ 
+No OPT,1.33,3.27,3.27,1.37
+Chiplet LOCAL,1.37,3.93,4.02,1.18
+Chiplet MIXED,1.43,3.52,4.62,3.07
+ 
+BIT: 64
+ 
+No OPT,1.23,2.44,3.78,1.24
+Chiplet LOCAL,1.29,3.65,3.99,1.17
+Chiplet MIXED,1.49,3.48,4.54,3.05
+ 
+Core: 32
+ 
+ 
+BIT: 16
+ 
+No OPT,1.31,3.83,3.94,1.71
+Chiplet LOCAL,1.41,4.39,4.50,1.81
+Chiplet MIXED,1.44,4.03,4.49,2.88
+ 
+BIT: 32
+ 
+No OPT,1.28,3.35,3.94,1.38
+Chiplet LOCAL,1.44,4.50,4.81,1.26
+Chiplet MIXED,1.46,4.20,5.52,2.80
+ 
+BIT: 64
+ 
+No OPT,1.22,3.53,4.02,1.40
+Chiplet LOCAL,1.41,4.43,4.75,1.25
+Chiplet MIXED,1.48,4.11,5.50,2.81
+ 
+Core: 40
+ 
+ 
+BIT: 16
+ 
+No OPT,1.08,4.21,4.34,2.08
+Chiplet LOCAL,1.48,4.67,5.01,1.89
+Chiplet MIXED,1.43,4.66,5.21,2.92
+ 
+BIT: 32
+ 
+No OPT,1.08,4.85,5.75,1.89
+Chiplet LOCAL,1.46,4.79,5.17,1.31
+Chiplet MIXED,1.44,4.71,6.05,2.52
+ 
+BIT: 64
+ 
+No OPT,1.08,4.32,5.18,1.96
+Chiplet LOCAL,1.41,4.53,5.26,1.30
+Chiplet MIXED,1.40,4.70,6.01,2.52
+ 
+Core: 48
+ 
+ 
+BIT: 16
+ 
+No OPT,1.02,3.89,5.01,2.07
+Chiplet LOCAL,1.43,4.87,5.33,2.07
+Chiplet MIXED,1.39,4.89,5.47,2.93
+ 
+BIT: 32
+ 
+No OPT,1.08,5.07,5.68,1.66
+Chiplet LOCAL,1.43,5.01,5.63,1.63
+Chiplet MIXED,1.42,4.99,6.37,2.26
+ 
+BIT: 64
+ 
+No OPT,1.01,4.81,4.63,1.70
+Chiplet LOCAL,1.41,4.98,5.55,1.63
+Chiplet MIXED,1.41,4.87,6.35,2.26
+ 
+Core: 56
+ 
+ 
+BIT: 16
+ 
+No OPT,.99,4.95,4.85,2.49
+Chiplet LOCAL,1.36,5.10,5.57,2.41
+Chiplet MIXED,1.36,5.09,5.69,2.86
+ 
+BIT: 32
+ 
+No OPT,1.00,4.65,5.64,2.20
+Chiplet LOCAL,1.34,5.10,5.96,1.81
+Chiplet MIXED,1.33,5.03,6.38,2.05
+ 
+BIT: 64
+ 
+No OPT,.96,4.40,4.49,2.06
+Chiplet LOCAL,1.32,5.03,6.09,1.82
+Chiplet MIXED,1.31,4.93,6.32,2.05
+ 
+Core: 64
+ 
+ 
+BIT: 16
+ 
+No OPT,.94,4.51,5.85,2.60
+Chiplet LOCAL,1.29,5.06,5.76,2.57
+Chiplet MIXED,1.26,5.17,5.86,2.58
+ 
+BIT: 32
+ 
+No OPT,.96,4.65,6.52,1.83
+Chiplet LOCAL,1.29,5.26,6.37,1.86
+Chiplet MIXED,1.30,5.16,6.65,1.86
+ 
+BIT: 64
+ 
+No OPT,.97,4.90,6.73,2.02
+Chiplet LOCAL,1.27,5.16,6.29,1.85
+Chiplet MIXED,1.26,5.24,6.43,1.85
+ 
+Core: 72
+ 
+ 
+BIT: 16
+ 
+No OPT,.92,5.20,6.82,2.45
+Chiplet LOCAL,.96,4.95,6.26,2.68
+Chiplet MIXED,.98,4.61,6.29,3.12
+ 
+BIT: 32
+ 
+No OPT,.88,4.64,6.13,2.17
+Chiplet LOCAL,1.01,5.00,6.91,1.95
+Chiplet MIXED,.98,4.55,7.22,3.30
+ 
+BIT: 64
+ 
+No OPT,.89,4.71,6.44,2.25
+Chiplet LOCAL,.93,5.07,6.85,1.87
+Chiplet MIXED,1.01,4.57,7.14,3.27
+ 
+Core: 80
+ 
+ 
+BIT: 16
+ 
+No OPT,.85,4.46,6.61,2.57
+Chiplet LOCAL,.84,4.91,6.50,2.32
+Chiplet MIXED,.85,4.45,6.60,3.40
+ 
+BIT: 32
+ 
+No OPT,.82,3.87,5.98,1.80
+Chiplet LOCAL,.89,4.96,7.23,1.45
+Chiplet MIXED,.90,4.93,7.84,3.34
+ 
+BIT: 64
+ 
+No OPT,.84,4.74,6.42,2.31
+Chiplet LOCAL,.85,4.98,7.04,1.39
+Chiplet MIXED,.84,4.43,7.72,3.39
+ 
+Core: 88
+ 
+ 
+BIT: 16
+ 
+No OPT,.81,4.47,6.32,3.29
+Chiplet LOCAL,.82,4.68,6.73,2.41
+Chiplet MIXED,.79,4.65,7.16,3.52
+ 
+BIT: 32
+ 
+No OPT,.83,5.26,4.97,2.19
+Chiplet LOCAL,.83,4.80,7.32,1.49
+Chiplet MIXED,.77,4.72,8.40,3.15
+ 
+BIT: 64
+ 
+No OPT,.77,4.42,6.91,2.34
+Chiplet LOCAL,.82,4.66,7.20,1.40
+Chiplet MIXED,.75,4.62,8.38,3.12
+ 
+Core: 96
+ 
+ 
+BIT: 16
+ 
+No OPT,.75,5.09,7.18,3.00
+Chiplet LOCAL,.76,4.34,6.84,2.33
+Chiplet MIXED,.77,4.53,7.49,3.51
+ 
+BIT: 32
+ 
+No OPT,.79,5.28,7.98,2.52
+Chiplet LOCAL,.78,4.89,7.45,1.45
+Chiplet MIXED,.75,4.85,8.83,2.90
+ 
+BIT: 64
+ 
+No OPT,.75,4.13,8.42,2.57
+Chiplet LOCAL,.80,4.61,7.35,1.43
+Chiplet MIXED,.73,4.60,8.62,2.88
+ 
+Core: 104
+ 
+ 
+BIT: 16
+ 
+No OPT,.70,5.09,7.33,3.03
+Chiplet LOCAL,.73,4.64,7.30,2.66
+Chiplet MIXED,.72,4.55,7.65,3.45
+ 
+BIT: 32
+ 
+No OPT,.71,4.77,7.81,3.03
+Chiplet LOCAL,.72,4.80,7.75,1.62
+Chiplet MIXED,.71,4.72,9.04,2.62
+ 
+BIT: 64
+ 
+No OPT,.70,4.35,6.77,3.03
+Chiplet LOCAL,.73,4.39,7.96,1.48
+Chiplet MIXED,.73,4.87,8.72,2.57
+ 
+Core: 112
+ 
+ 
+BIT: 16
+ 
+No OPT,.71,4.74,7.60,3.13
+Chiplet LOCAL,.70,4.44,7.56,2.64
+Chiplet MIXED,.68,4.48,7.97,3.49
+ 
+BIT: 32
+ 
+No OPT,.71,4.16,7.70,2.43
+Chiplet LOCAL,.69,4.76,8.03,1.59
+Chiplet MIXED,.68,4.66,9.06,2.42
+ 
+BIT: 64
+ 
+No OPT,.67,4.75,7.47,2.63
+Chiplet LOCAL,.68,4.57,8.23,1.50
+Chiplet MIXED,.66,4.64,9.01,2.40
+ 
+Core: 120
+ 
+ 
+BIT: 16
+ 
+No OPT,.67,4.26,7.56,3.56
+Chiplet LOCAL,.67,4.47,7.91,2.92
+Chiplet MIXED,.66,4.47,8.03,3.25
+ 
+BIT: 32
+ 
+No OPT,.67,4.29,7.46,2.96
+Chiplet LOCAL,.64,4.57,8.67,1.91
+Chiplet MIXED,.64,4.50,9.15,2.27
+ 
+BIT: 64
+ 
+No OPT,.66,4.46,7.38,2.79
+Chiplet LOCAL,.62,4.45,8.51,1.85
+Chiplet MIXED,.67,4.49,8.90,2.18
+ 
+Core: 128
+ 
+ 
+BIT: 16
+ 
+No OPT,.61,4.70,6.78,3.70
+Chiplet LOCAL,.61,4.28,8.19,3.09
+Chiplet MIXED,.62,4.17,8.06,3.17
+ 
+BIT: 32
+ 
+No OPT,.66,5.06,8.96,2.63
+Chiplet LOCAL,.63,4.34,9.02,2.13
+Chiplet MIXED,.61,4.28,8.88,2.10
+ 
+BIT: 64
+ 
+No OPT,.65,4.05,8.43,3.13
+Chiplet LOCAL,.60,4.30,8.67,2.03
+Chiplet MIXED,.62,4.31,8.48,2.06
